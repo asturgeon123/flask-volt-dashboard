@@ -21,6 +21,9 @@ class Users(db.Model, UserMixin):
     email         = db.Column(db.String(64), unique=True)
     password      = db.Column(db.LargeBinary)
 
+    role = db.Column(db.String(10), nullable=True)
+    airport_code = db.Column(db.String(4), nullable=True)
+
     oauth_github  = db.Column(db.String(100), nullable=True)
 
     def __init__(self, **kwargs):

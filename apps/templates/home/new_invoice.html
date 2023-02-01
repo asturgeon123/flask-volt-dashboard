@@ -1,0 +1,85 @@
+{% extends "layouts/base.html" %}
+
+{% block title %} Settings {% endblock %} 
+
+<!-- Specific Page CSS goes HERE  -->
+{% block stylesheets %}{% endblock stylesheets %}
+
+{% block content %}
+
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center py-4">
+    <div class="d-block mb-4 mb-md-0">
+        <nav aria-label="breadcrumb" class="d-none d-md-inline-block">
+            <ol class="breadcrumb breadcrumb-dark breadcrumb-transparent">
+                <li class="breadcrumb-item">
+                    <a href="#">
+                        <svg class="icon icon-xxs" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
+                    </a>
+                </li>
+                <li class="breadcrumb-item"><a href="#">Dashboard</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Transactions</li>
+            </ol>
+        </nav>
+        <h2 class="h4">New Invoice</h2>
+    </div>
+</div>
+    <div class="row">
+        <div class="col-12 col-xl-8">
+            <div class="card card-body border-0 shadow mb-4">
+                <h2 class="h5 mb-4">Aircraft information</h2>
+                <p>
+                    {% if msg %}
+                        {{ msg | safe }}
+                    {% else %}
+                        <br>
+                    {% endif %}                                     
+                </p>
+                {% if success %}
+
+                <a href="transactions.html">
+                    <button  class="btn btn-success" id="successAlert">Invoice created successfully</button>
+                </a>
+                {% else %}
+                <form method="post" action="">
+                    {{ form.hidden_tag() }}
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <div>
+                                <label for="aircraft_tailnumber">Aircraft Tail Number</label>
+                                {{ form.aircraft_tailnumber(placeholder="Tail Number", class="form-control") }}
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <div>
+                                <label for="total_amount">Total Amount</label>
+                                {{ form.total_amount(placeholder="Total Amount", class="form-control") }}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row align-items-center">
+                        <div class="col-md-6 mb-3">
+                            <div>
+                                <label for="product_name">Product Name on Invoice</label>
+                                {{ form.product_name(placeholder="Product Name", class="form-control") }}
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <div>
+                                <label for="days_till_invoice_due">Days until Invoice Due</label>
+                                {{ form.days_till_invoice_due(placeholder="Days until Due", class="form-control") }}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mt-3">
+                        <button name="create_invoice" class="btn btn-gray-800 mt-2 animate-up-2" type="submit">Create Invoice</button>
+                    </div>
+                </form>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+{% endblock content %}
+
+<!-- Specific Page JS goes HERE  -->
+{% block javascripts %}{% endblock javascripts %}
