@@ -91,7 +91,7 @@
                 <td>{{ invoice.registered_owner }}</td>
                 <td>{{ invoice.invoice_created_date }}</td>
                 <td>{{ invoice.invoice_due_date }}</td>
-                <td>{{ invoice.total_amount }}</td>
+                <td>{{ "$%.2f"|format(invoice.total_amount) }}</td>
                 <td>{{ invoice.invoice_status }}</td>
                 <td>
                     <a href="get_invoice/{{ invoice.invoice_id }}" class="text-dark me-3"><span class="badge bg-secondary">View</span></a>  

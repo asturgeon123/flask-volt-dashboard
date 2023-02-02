@@ -4,7 +4,7 @@ Copyright (c) 2019 - present AppSeed.us
 """
 
 from apps.home import blueprint
-from flask import render_template, request
+from flask import render_template, request, redirect, url_for
 from flask_login import login_required, current_user
 from jinja2 import TemplateNotFound
 
@@ -13,33 +13,82 @@ from flask_paginate import Pagination, get_page_args
 from apps import db
 #from apps.home import invoice_database_manager as invoice_db
 from apps.home.models import Invoices
-from apps.home.forms import CreateInvoiceForm
+from apps.home.forms import CreateInvoiceForm, EditInvoiceForm
 from apps.home import faa_utils
 
 
+#Time and Date
+from datetime import datetime
+from dateutil import parser
 
 @blueprint.route('/index')
 @login_required
 def index():
-
+    return render_template('home/dashboard.html', segment='index')
     return render_template('home/index.html', segment='index')
 
 
-
 @blueprint.route('get_invoice/<invoice_id>')
+@blueprint.route('get_invoice/<invoice_id>/<invoice_action>', methods=['GET', 'POST'])
 @login_required
-def get_invoice(invoice_id):
+def get_invoice(invoice_id,invoice_action='view'):
+
 
     try:
+        #Load the invoice, if not found return 404
         invoice = Invoices.query.filter_by(invoice_id=invoice_id).first()
-        # Serve the file (if exists) from app/templates/home/FILE.html
-        return render_template("home/" +"view_invoice.html", days_till_due=invoice.get_days_till_due(),due_date_formatted=invoice.get_due_date_formatted(), create_date_formatted=invoice.get_created_date_formatted() ,data=invoice)
+        print("Invoice", invoice)
+        if invoice is None:
+            return render_template('home/page-404.html'), 404
+
+        #View the Invoice
+        if invoice_action == 'view':
+            # Serve the file (if exists) from app/templates/home/FILE.html
+            return render_template("home/" +"view_invoice.html", days_till_due=invoice.get_days_till_due(),due_date_formatted=invoice.get_due_date_formatted(), create_date_formatted=invoice.get_created_date_formatted() ,data=invoice)
+
+        #Edit the Invoice
+        elif invoice_action == 'edit':
+            #form = EditInvoiceForm(request.form, obj=invoice)
+            form = EditInvoiceForm(request.form, obj=invoice)
+            if 'edit_invoice' in request.form: #request.method == 'POST':
+                #print("FORM",request.form)
+
+                try:
+                    #Invoice Data
+                    invoice.total_amount = request.form['total_amount']
+                    invoice.invoice_status = request.form['invoice_status']
+                    invoice.registered_owner = request.form['registered_owner']
+                    invoice.product_name = request.form['product_name']
+                    invoice.invoice_due_date = datetime.strptime(request.form['invoice_due_date'], '%Y-%m-%d') #Convert user input date to datetime object
+
+                    #Address Date
+                    invoice.address_street = request.form['address_street']
+                    invoice.address_city = request.form['address_city']
+                    invoice.address_state = request.form['address_state']
+                    invoice.address_zip = request.form['address_zip']
+
+                    db.session.commit() #Save the changes to the database
+
+                    return redirect(url_for('home_blueprint.get_invoice', invoice_id=invoice_id))
+                except Exception as e:
+                    print("Error", e)
+                    db.session.rollback()
+
+                    return render_template("home/" +"edit_invoice.html", form=form,days_till_due=invoice.get_days_till_due(),due_date_formatted=invoice.get_due_date_formatted(), create_date_formatted=invoice.get_created_date_formatted() ,data=invoice)
+            else:
+                # Serve the file (if exists) from app/templates/home/FILE.html
+                return render_template("home/" +"edit_invoice.html", form=form,days_till_due=invoice.get_days_till_due(),due_date_formatted=invoice.get_due_date_formatted(), create_date_formatted=invoice.get_created_date_formatted() ,data=invoice)
+
+        #Delete the Invoice
+        elif invoice_action == 'delete':
+            # Serve the file (if exists) from app/templates/home/FILE.html
+            Invoices.query.filter_by(invoice_id=invoice_id).delete()
+            db.session.commit()
+            return redirect(url_for('home_blueprint.index'))
+
 
     except TemplateNotFound:
         return render_template('home/page-404.html'), 404
-
-    #except:
-    #    return render_template('home/page-500.html'), 500
 
 
 

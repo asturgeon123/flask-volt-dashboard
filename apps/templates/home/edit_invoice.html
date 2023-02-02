@@ -71,7 +71,7 @@ ul.timeline-3 > li:before {
                 </svg>
                 Mark as Paid
             </a>
-            <a class="dropdown-item d-flex align-items-center" href="{{ data.invoice_id }}/edit">
+            <a class="dropdown-item d-flex align-items-center" href="#">
                 <svg class="dropdown-icon text-gray-400 me-2" xmlns="http://www.w3.org/2000/svg" width="16" height="16"
                     fill="currentColor" class="bi bi-pencil-fill" viewBox="0 0 16 16">
                     <path
@@ -88,7 +88,7 @@ ul.timeline-3 > li:before {
                 Tail Number History
             </a>
             <div role="separator" class="dropdown-divider my-1"></div>
-            <a class="text-danger dropdown-item d-flex align-items-center" href="{{ data.invoice_id }}/delete">
+            <a data-bs-toggle="modal" data-bs-target="#modal-notification" class="text-danger dropdown-item d-flex align-items-center" href="#">
                 <svg class="dropdown-icon text-gray-400 me-2" xmlns="http://www.w3.org/2000/svg" width="16" height="16"
                     fill="red" class="bi bi-trash-fill" viewBox="0 0 16 16">
                     <path
@@ -96,6 +96,7 @@ ul.timeline-3 > li:before {
                 </svg>
                 Delete Invoice
             </a>
+
         </div>
     </div>
 </div>
@@ -107,36 +108,50 @@ ul.timeline-3 > li:before {
             <!-- TOP OF INFO CARD  -->
             <div class="row">
                 <h2 class="h5 mb-4 col">Invoice Information</h2>
-                <h2 class="h5 mb-4 col">Invoice Status: <span class="badge bg-danger"><b>{{ data.invoice_status }}</b></span></h2>
             </div>
             
 
             <!-- INVOICE INFO FORM  -->
-            <form>
+            <form method="post" action="">
+                {{ form.hidden_tag() }}
                 <div class="row">
+
+
+                    <div class="col-md-6 mb-3">
+                        <div>
+                            <label for="invoice_status">Invoice Status</label>
+                            {{ form.invoice_status(placeholder="Status", class="form-control") }}
+                        </div>
+                    </div>
                     
                     <div class="col-md-6 mb-3">
                         <div>
-                            <label for="aircraft_tailnumber">Aircraft Tailnumber: </label>
-                            <div id="aircraft_tailnumber"><b>{{ data.aircraft_tailnumber }}</b></div>
-                        </div>
-                    </div>
-                    <div class="col-md-6 mb-3">
-                        <div>
-                            <label for="registered_owner">Registered Owner: </label>
-                            <div id="registered_owner"><b>Joe Dohn</b></div>
+                            <label for="registered_owner">Registered Owner</label>
+                            {{ form.registered_owner(placeholder="Registered Owner", class="form-control") }}
                         </div>
                     </div>
                 </div>
                 <hr>
                 <div class="row align-items-center">
                     <div class="col-md-6 mb-3">
-                        <label for="product_name">Product Name: </label>
-                        <div id="product_name"><b>{{ data.product_name }}</b></div>
+                        <label for="registered_owner">Product Name</label>
+                        {{ form.product_name(placeholder="Product Name", class="form-control") }}
                     </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="invoice_due_date">Due Date</label>
+                        {{ form.invoice_due_date(placeholder="Due Date", class="form-control") }}
+                    </div>
+                    
                 </div>
+                <hr>
                 <h2 class="h5 my-4">Aircraft Information</h2>
                 <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <div>
+                            <label for="aircraft_tailnumber">Aircraft Tailnumber: </label>
+                            <div id="aircraft_tailnumber"><b>{{ data.aircraft_tailnumber }}</b></div>
+                        </div>
+                    </div>
                     <div class="col-md-3 mb-3">
                         <div class="form-group">
                             <label for="manufacturer_name">Manufacturer Name</label>
@@ -161,29 +176,39 @@ ul.timeline-3 > li:before {
                     <div class="col-sm-3 mb-3">
                         <div class="form-group">
                             <label for="address_street">Address: </label>
-                            <div id="address_street"><b>{{ data.address_street }}</b></div>
+                            {{ form.address_street(placeholder="123 Goat Rd", class="form-control") }}
                         </div>
                     </div>
                     <div class="col-sm-3 mb-3">
                         <div class="form-group">
                             <label for="address_city">City: </label>
-                            <div id="address_city"><b>{{ data.address_city }}</b></div>
+                            {{ form.address_city(placeholder="Joplin", class="form-control") }}
                         </div>
                     </div>
                     <div class="col-sm-3 mb-3">
                         <label for="address_state">State: </label>
-                        <div id="address_state"><b>{{ data.address_state }}</b></div>
+                        {{ form.address_state(placeholder="Missouri", class="form-control") }}
                     </div>
                     <div class="col-sm-3">
                         <div class="form-group">
                             <label for="address_zip">ZIP: </label>
-                            <div id="address_zip"><b>{{ data.address_zip }}</b></div>
+                            {{ form.address_zip(placeholder="70258", class="form-control") }}
                         </div>
                     </div>
                 </div>
                 <hr>
                 <div class="d-flex p-2 bd-highlight flex-row-reverse">
-                    <h3>Amount Due: <b>{{ "$%.2f"|format(data.total_amount) }}</b></h3>
+                    <div class="row">
+                        <div class="col"><h3 class="col3-1">Amount Due: </h3></div>
+                        <div class="col">{{ form.total_amount(placeholder="32.50", class="form-control col3") }}</div>
+                    </div>
+                </div>
+                <hr>
+                <div class="d-flex p-2 bd-highlight flex-row-reverse">
+                    <div class="row">
+                        <button name="edit_invoice" class="btn btn-gray-800 mt-2 animate-up-2" type="submit">Apply</button>
+                    </div>
+                    
                 </div>
             </form>
         </div>
